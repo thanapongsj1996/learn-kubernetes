@@ -5,7 +5,7 @@ metadata:
   labels:
     app: mongo-express
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: mongo-express
@@ -20,9 +20,19 @@ spec:
           ports:
             - containerPort: 8081
           env:
-            - name: ME_CONFIG_MONGODB_ADMINUSERNAME
-              value: "admin"
-            - name: ME_CONFIG_MONGODB_ADMINPASSWORD
-              value: "12345"
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueForm:
+                secretKeyRef:
+                  name: "mongo-secret"
+                  key: "username"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueForm:
+                secretKeyRef:
+                  name: "mongo-secret"
+                  key: "password"
             - name: ME_CONFIG_MONGODB_SERVER
               value: "mongo-service"
+              # valueForm:
+              #   configMapKeyRef:
+              #     name: "mongo-express-configmap"
+              #     key: "database_url"
